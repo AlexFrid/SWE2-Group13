@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Customer {
 	
 	private ArrayList<Account> accounts;
+	private String password = "PASSWORD"; //static for now
 	
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -17,6 +18,10 @@ public class Customer {
 		}
 		return s;
 	}
+
+	public String getPassword() {
+		return this.password;
+	} 
 
 	public void addAccount(Account account) {
 		accounts.add(account);		

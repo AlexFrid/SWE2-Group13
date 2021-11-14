@@ -31,8 +31,13 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+		//Check username
 		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
+			//Check password
+			Customer customer = customers.get(userName);
+			if(customer.getPassword().equals(password)) {
+				return new CustomerID(userName);
+			}
 		}
 		return null;
 	}
