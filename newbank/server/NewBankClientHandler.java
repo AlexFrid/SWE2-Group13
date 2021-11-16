@@ -30,6 +30,14 @@ public class NewBankClientHandler extends Thread{
 				out.println("Enter Password");
 				String password = in.readLine();
 				out.println("Checking Details...");
+				//Test new account functionality
+				// CustomerID customer;
+				// if(bank.isPasswordValid(password) && bank.isUserNameValid(userName)) {
+				// 	customer = bank.registerCustomer(userName, password);
+				// } 
+				// else {
+				// 	customer = null;
+				// }
 				// authenticate user and get customer ID token from bank for use in subsequent requests
 				CustomerID customer = bank.checkLogInDetails(userName, password);
 				// if the user is authenticated then get requests from the user and process them 
