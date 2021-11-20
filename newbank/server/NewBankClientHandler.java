@@ -19,30 +19,74 @@ public class NewBankClientHandler extends Thread{
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
 	
-	public void run() {
-		// keep getting requests from the client and processing them
+	public void run() {	
 		try {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customer = bank.checkLogInDetails(userName, password);
-			// if the user is authenticated then get requests from the user and process them 
-			if(customer != null) {
-				out.println("Log In Successful. What do you want to do?");
-				while(true) {
-					String request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
-					out.println(responce);
+			// 1. Process intial request (login or register)
+			out.println(
+			"####################\n" +
+			"Welcome to New Bank\n" +
+			"####################");
+			out.println("Type LOGIN if you are an existing user, or REGISTER if you are a new user");
+			String intialCommand = in.readLine();
+			boolean requestValid = false;
+			while(!requestValid) {
+				if(intialCommand.equals("LOGIN") || intialCommand.equals("REGISTER")) {
+					requestValid = true;
+				}
+				else {
+					out.println("Command not recognised. Please enter command LOGIN or REGISTER");
+					intialCommand = in.readLine();
 				}
 			}
-			else {
-				out.println("Log In Failed");
+
+			// 2. Control flow for request 
+			CustomerID customer = null;
+			while(true) {
+				if(intialCommand.equals("LOGIN")) {
+					// ask for user name
+					out.println("Enter Username");
+					String userName = in.readLine();
+					// ask for password
+					out.println("Enter Password");
+					String password = in.readLine();
+					out.println("Checking Details...");
+					customer = bank.checkLogInDetails(userName, password);
+					//Validate login details
+					if(customer == null) {
+						out.println("Log In Failed. Invalid Credentials, please try again.");
+					}
+					else {
+						out.println("Log In Successful. What do you want to do?");
+					}
+				} 
+				else {
+					//ask for user name
+					out.println("Please enter a valid username (Must be between 6 and 15 characters with no spaces)");
+					String userName = in.readLine();
+					//ask for password
+					out.println("Please enter a valid password (Must be between 9 and 15 characters with a combination of uppercase letters, lowercase letters and numbers with no spaces)");
+					String password = in.readLine();
+					out.println("Checking Details...");
+					//Validate account details
+					if(bank.isPasswordValid(password) && bank.isUserNameValid(userName)) {
+						customer = bank.registerCustomer(userName, password);
+						out.println("Registration successful. What do you want to do?");
+					} 
+					else {
+						customer = null;
+						out.println("Registration failed. The username and password entered must be valid, please try again");
+					}	
+				}
+
+				// keep getting requests from the client and processing them if authorised
+				if(customer != null) {
+					while(true) {
+						String request = in.readLine();
+						System.out.println("Request from " + customer.getKey());
+						String responce = bank.processRequest(customer, request);
+						out.println(responce);
+					}
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1,6 +1,8 @@
 package newbank.server;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NewBank {
 	
@@ -31,8 +33,13 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+		//Check username
 		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
+			//Check password
+			Customer customer = customers.get(userName);
+			if(customer.getPassword().equals(password)) {
+				return new CustomerID(userName);
+			}
 		}
 		return null;
 	}
@@ -46,6 +53,58 @@ public class NewBank {
 			}
 		}
 		return "FAIL";
+	}
+
+	//Method to check whether a password is valid (upon registration)
+	//Validation: must contain at least one uppercase character, one lowercase character, one number and no spaces
+	//Must also be in character range
+	public boolean isPasswordValid(String password) {
+		String[] badPasswords = {"PASSWORD", "password", "123456789"};
+		int upperCharLimit = 15;
+		int lowerCharLimit = 9;
+
+		//False if password is common example of bad password
+		for(String x : badPasswords) {
+			if(x.equals(password)) {
+				return false;
+			}
+		}
+
+		//Check password matches Regex pattern and is in character range
+		Pattern pattern = Pattern.compile("(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(^\\S+$)");
+		Matcher matcher = pattern.matcher(password);
+		boolean match = matcher.find();
+		int strLen = password.length();
+
+		if(match && strLen >= lowerCharLimit && strLen <= upperCharLimit) {
+			return true;
+		} 
+		else {
+			return false;
+		}
+	}
+
+	//Method to check whether a username is valid (upon registration)
+	//Validation: username is unique, in character range and contains no spaces
+	public boolean isUserNameValid(String userName) {
+		boolean duplicate = customers.containsKey(userName);
+		int upperCharLimit = 15;
+		int lowerCharLimit = 6;
+		int strLen = userName.length();
+
+		if(!duplicate && strLen >= lowerCharLimit && strLen <= upperCharLimit && !userName.contains(" ")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public CustomerID registerCustomer(String userName, String password) {
+		Customer customer = new Customer();
+		customer.setPassword(password);
+		customers.put(userName, customer);
+		return new CustomerID(userName);
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
