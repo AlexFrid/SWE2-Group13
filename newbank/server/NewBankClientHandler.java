@@ -80,6 +80,8 @@ public class NewBankClientHandler extends Thread{
 
 				// keep getting requests from the client and processing them if authorised
 				if(customer != null) {
+					out.println("SHOWMYACCOUNTS - view your accounts and their balances");
+					out.println("RESETPASSWORD <Password> - reset login password");
 					while(true) {
 						String request = in.readLine();
 						System.out.println("Request from " + customer.getKey());

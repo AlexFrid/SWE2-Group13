@@ -46,10 +46,33 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+		String[] requestParams = request.split("\\s+");
+		String command = requestParams[0];
+
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			default : return "FAIL";
+			switch(command) {
+			//show customer's accounts
+			case "SHOWMYACCOUNTS" : 
+				return showMyAccounts(customer);
+			
+			//reset customer's password
+			case "RESETPASSWORD" :
+				String password;
+				try {
+					password = requestParams[1];
+				}
+				catch(IndexOutOfBoundsException e) {
+					return "Not enough arguments have been supplied for this command";
+				}
+				
+				if(isPasswordValid(password)) {
+					resetPassword(customer, password);
+					return "Password has been successfully reset";
+				}
+				return "Password has not been reset - new password is invalid";
+
+			default : 
+				return "FAIL";
 			}
 		}
 		return "FAIL";
@@ -105,6 +128,10 @@ public class NewBank {
 		customer.setPassword(password);
 		customers.put(userName, customer);
 		return new CustomerID(userName);
+	}
+
+	private void resetPassword(CustomerID customer, String password) {
+		customers.get(customer.getKey()).setPassword(password);
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
