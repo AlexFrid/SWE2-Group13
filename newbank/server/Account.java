@@ -9,6 +9,15 @@ public class Account {
 		this.accountName = accountName;
 		this.openingBalance = openingBalance;
 	}
+
+	public static boolean checkAccountName(String accountName) {
+		if(accountName.equals("Main") || accountName.equals("Savings") || accountName.equals("Loan")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	public String toString() {
 		return (accountName + ": " + openingBalance);

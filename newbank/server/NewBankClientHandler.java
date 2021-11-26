@@ -82,6 +82,7 @@ public class NewBankClientHandler extends Thread{
 				if(customer != null) {
 					out.println("SHOWMYACCOUNTS - view your accounts and their balances");
 					out.println("RESETPASSWORD <Password> - reset login password");
+					out.println("CREATEACCOUNT <Account name> <Opening balance> - create new bank account");
 					while(true) {
 						String request = in.readLine();
 						System.out.println("Request from " + customer.getKey());

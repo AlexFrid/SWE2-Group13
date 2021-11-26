@@ -57,19 +57,30 @@ public class NewBank {
 			
 			//reset customer's password
 			case "RESETPASSWORD" :
-				String password;
-				try {
-					password = requestParams[1];
-				}
-				catch(IndexOutOfBoundsException e) {
-					return "Not enough arguments have been supplied for this command";
+				if(requestParams.length != 2) {
+					return "Not enough or too many arguments have been supplied for this command";
 				}
 				
+				String password = requestParams[1];
 				if(isPasswordValid(password)) {
 					resetPassword(customer, password);
 					return "Password has been successfully reset";
 				}
-				return "Password has not been reset - new password is invalid";
+				return "Password has not been reset - new password is invalid. Must be between 9 and 15 characters with a combination of uppercase letters, lowercase letters and numbers with no spaces";
+			
+			//create an account for a customer
+			case "CREATEACCOUNT" :
+				if(requestParams.length != 3) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				String accountName = requestParams[1];
+				String openingBalance = requestParams[2];
+				if(Account.checkAccountName(accountName)) {
+					createAccount(customer, accountName, Double.parseDouble(openingBalance));
+					return "Account has been successfully created";
+				}
+				return "Account has not been created - account name is invalid. Account name must be either Main, Savings or Loan";
 
 			default : 
 				return "FAIL";
@@ -132,6 +143,10 @@ public class NewBank {
 
 	private void resetPassword(CustomerID customer, String password) {
 		customers.get(customer.getKey()).setPassword(password);
+	}
+
+	private void createAccount(CustomerID customer, String accountName, double openingBalance) {
+		customers.get(customer.getKey()).addAccount(new Account(accountName, openingBalance));
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
