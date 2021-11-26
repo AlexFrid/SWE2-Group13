@@ -46,6 +46,7 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+		//Splits user input on a space to get command parameters
 		String[] requestParams = request.split("\\s+");
 		String command = requestParams[0];
 
@@ -76,11 +77,18 @@ public class NewBank {
 
 				String accountName = requestParams[1];
 				String openingBalance = requestParams[2];
-				if(Account.checkAccountName(accountName)) {
+				boolean existingAccount = customers.get(customer.getKey()).isDuplicateAccount(accountName);
+
+				if(existingAccount) {
+					return "Account has not been created - an account already exists with this name";
+				}
+				else if(!Account.isNameValid(accountName)) {
+					return "Account has not been created - account name is invalid. Account name must be either Main, Savings or Loan";
+				}
+				else {
 					createAccount(customer, accountName, Double.parseDouble(openingBalance));
 					return "Account has been successfully created";
 				}
-				return "Account has not been created - account name is invalid. Account name must be either Main, Savings or Loan";
 
 			default : 
 				return "FAIL";

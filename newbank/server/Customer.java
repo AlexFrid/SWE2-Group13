@@ -19,6 +19,16 @@ public class Customer {
 		return s;
 	}
 
+	//Check if customer already has an account with the same name
+	public boolean isDuplicateAccount(String accountName) {
+		for(Account account : accounts) {
+			if(account.getAccountName().equals(accountName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public String getPassword() {
 		return this.password;
 	}
