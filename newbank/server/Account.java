@@ -26,10 +26,19 @@ public class Account {
 	}
 
 	public String toString() {
-		return (accountName + ": " + openingBalance);
+		return (accountName + ": " + currentBalance);
 	}
 	
-	// no transactions yet affecting the current balance 
+	public double addToAccount(double parsedAmount) {
+		currentBalance = getCurrentBalance() + parsedAmount;
+		return currentBalance;
+	}
+	
+	public double removeFromAccount(double parsedAmount) {
+		currentBalance = getCurrentBalance() - parsedAmount;
+		return currentBalance;
+	}
+	
 	public double getCurrentBalance() {
 		currentBalance = openingBalance;
 		return currentBalance;

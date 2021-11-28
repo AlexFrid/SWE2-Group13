@@ -53,4 +53,21 @@ public class Customer {
 		}
 		return false;
 	}
+	
+	public void addToAccount(String accountName, String amount) {
+		double parsedAmount = Double.parseDouble(amount);
+		for (Account a : accounts){
+			if (a.getAccountName().equals(accountName)) {
+				a.addToAccount(parsedAmount);
+			}
+		}
+	}
+	public void removeFromAccount(String accountName, String amount) {
+		double parsedAmount = Double.parseDouble(amount);
+		for (Account a : accounts){
+			if (a.getAccountName().equals(accountName)) {
+				a.removeFromAccount(parsedAmount);
+			}
+		}
+	}
 }

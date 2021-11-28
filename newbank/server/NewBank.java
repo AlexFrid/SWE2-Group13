@@ -109,8 +109,9 @@ public class NewBank {
 					return "Insufficient funds";
 				}
 				else {
-					return "Funds have been transferred successfully"; // for now, just checking if funds CAN be transferred, no actual transfer taking place yet 
-				}
+					customers.get(customer.getKey()).addToAccount(account2, amountToMove);
+					customers.get(customer.getKey()).removeFromAccount(account1, amountToMove);
+					return "Funds have been transferred successfully"; 				}
 	
 			default : 
 				return "FAIL";
