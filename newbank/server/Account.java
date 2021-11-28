@@ -9,7 +9,20 @@ public class Account {
 		this.accountName = accountName;
 		this.openingBalance = openingBalance;
 	}
-	
+
+	public static boolean isNameValid(String accountName) {
+		if(accountName.equals("Main") || accountName.equals("Savings") || accountName.equals("Loan")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public String getAccountName() {
+		return this.accountName;
+	}
+
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}

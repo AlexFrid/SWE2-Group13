@@ -14,9 +14,19 @@ public class Customer {
 	public String accountsToString() {
 		String s = "";
 		for(Account a : accounts) {
-			s += a.toString();
+			s += a.toString() + "\n";
 		}
 		return s;
+	}
+
+	//Check if customer already has an account with the same name
+	public boolean isDuplicateAccount(String accountName) {
+		for(Account account : accounts) {
+			if(account.getAccountName().equals(accountName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getPassword() {

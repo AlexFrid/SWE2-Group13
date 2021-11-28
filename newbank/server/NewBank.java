@@ -46,10 +46,52 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+		//Splits user input on a space to get command parameters
+		String[] requestParams = request.split("\\s+");
+		String command = requestParams[0];
+
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			default : return "FAIL";
+			switch(command) {
+			//show customer's accounts
+			case "SHOWMYACCOUNTS" : 
+				return showMyAccounts(customer);
+			
+			//reset customer's password
+			case "RESETPASSWORD" :
+				if(requestParams.length != 2) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+				
+				String password = requestParams[1];
+				if(isPasswordValid(password)) {
+					resetPassword(customer, password);
+					return "Password has been successfully reset";
+				}
+				return "Password has not been reset - new password is invalid. Must be between 9 and 15 characters with a combination of uppercase letters, lowercase letters and numbers with no spaces";
+			
+			//create an account for a customer
+			case "CREATEACCOUNT" :
+				if(requestParams.length != 3) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				String accountName = requestParams[1];
+				String openingBalance = requestParams[2];
+				boolean existingAccount = customers.get(customer.getKey()).isDuplicateAccount(accountName);
+
+				if(existingAccount) {
+					return "Account has not been created - an account already exists with this name";
+				}
+				else if(!Account.isNameValid(accountName)) {
+					return "Account has not been created - account name is invalid. Account name must be either Main, Savings or Loan";
+				}
+				else {
+					createAccount(customer, accountName, Double.parseDouble(openingBalance));
+					return "Account has been successfully created";
+				}
+
+			default : 
+				return "FAIL";
 			}
 		}
 		return "FAIL";
@@ -105,6 +147,14 @@ public class NewBank {
 		customer.setPassword(password);
 		customers.put(userName, customer);
 		return new CustomerID(userName);
+	}
+
+	private void resetPassword(CustomerID customer, String password) {
+		customers.get(customer.getKey()).setPassword(password);
+	}
+
+	private void createAccount(CustomerID customer, String accountName, double openingBalance) {
+		customers.get(customer.getKey()).addAccount(new Account(accountName, openingBalance));
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
