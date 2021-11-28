@@ -21,7 +21,7 @@ public class NewBankClientHandler extends Thread{
 	
 	public void run() {	
 		try {
-			// 1. Process intial request (login or register)
+			// 1. Process initial request (login or register)
 			out.println(
 			"####################\n" +
 			"Welcome to New Bank\n" +
@@ -83,11 +83,13 @@ public class NewBankClientHandler extends Thread{
 					out.println("SHOWMYACCOUNTS - view your accounts and their balances");
 					out.println("RESETPASSWORD <Password> - reset login password");
 					out.println("CREATEACCOUNT <Account name> <Opening balance> - create new bank account");
+					out.println("MOVE <Amount> <Account name 1> <Account name 2> - transfer amount from Account 1 to Account 2");
+					
 					while(true) {
 						String request = in.readLine();
 						System.out.println("Request from " + customer.getKey());
-						String responce = bank.processRequest(customer, request);
-						out.println(responce);
+						String response = bank.processRequest(customer, request);
+						out.println(response);
 					}
 				}
 			}

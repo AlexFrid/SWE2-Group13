@@ -40,4 +40,17 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}
+	
+	
+	public boolean isAmountAvailable(String accountName, String amount) {
+		double parsedAmount = Double.parseDouble(amount);
+		for (Account a : accounts){
+			if (a.getAccountName().equals(accountName)) {
+				if (a.getCurrentBalance() - parsedAmount >= 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

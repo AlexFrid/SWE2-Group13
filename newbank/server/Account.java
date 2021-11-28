@@ -4,6 +4,8 @@ public class Account {
 	
 	private String accountName;
 	private double openingBalance;
+	private double currentBalance;
+
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
@@ -26,5 +28,12 @@ public class Account {
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}
+	
+	// no transactions yet affecting the current balance 
+	public double getCurrentBalance() {
+		currentBalance = openingBalance;
+		return currentBalance;
+	}
+	
 
 }
