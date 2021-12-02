@@ -3,11 +3,13 @@ package newbank.server;
 public class Account {
 	
 	private String accountName;
-	private double openingBalance;
+	private double currentBalance;
+
+	
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
-		this.openingBalance = openingBalance;
+		this.currentBalance = openingBalance;
 	}
 
 	public static boolean isNameValid(String accountName) {
@@ -24,7 +26,22 @@ public class Account {
 	}
 
 	public String toString() {
-		return (accountName + ": " + openingBalance);
+		return (accountName + ": " + getCurrentBalance());
 	}
+	
+	public double addToAccount(double parsedAmount) {
+		currentBalance = getCurrentBalance() + parsedAmount;
+		return currentBalance;
+	}
+	
+	public double removeFromAccount(double parsedAmount) {
+		currentBalance = getCurrentBalance() - parsedAmount;
+		return currentBalance;
+	}
+	
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
+	
 
 }
