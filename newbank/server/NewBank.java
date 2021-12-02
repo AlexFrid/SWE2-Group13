@@ -90,6 +90,29 @@ public class NewBank {
 					return "Account has been successfully created";
 				}
 
+			// move cash between accounts 
+			case "MOVE" :
+				if(requestParams.length != 4) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+				String amountToMove = requestParams[1];
+				String account1 = requestParams[2];
+				String account2 = requestParams[3];
+				
+				boolean validAccount1 = customers.get(customer.getKey()).isDuplicateAccount(account1);
+				boolean validAccount2 = customers.get(customer.getKey()).isDuplicateAccount(account2);
+				boolean validAmount = customers.get(customer.getKey()).isAmountAvailable(account1, amountToMove);			
+				if(!validAccount1 ||!validAccount2 ) {
+					return "Please enter valid account names to complete the transaction";
+				}
+				else if (!validAmount) {
+					return "Insufficient funds";
+				}
+				else {
+					customers.get(customer.getKey()).addToAccount(account2, amountToMove);
+					customers.get(customer.getKey()).removeFromAccount(account1, amountToMove);
+					return "Funds have been transferred successfully"; 				}
+	
 			default : 
 				return "FAIL";
 			}
