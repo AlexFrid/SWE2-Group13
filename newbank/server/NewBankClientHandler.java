@@ -21,50 +21,66 @@ public class NewBankClientHandler extends Thread{
 	
 	public void run() {	
 		try {
-			// 1. Process initial request (login or register)
-			String intialCommand = greetUser();
-
-			// 2. Control flow for request 
-			CustomerID customer = null;
 			while(true) {
-				if(intialCommand.equals("LOGIN")) {
-					customer = login();
-				} 
-				else {
-					//ask for user name
-					out.println("Please enter a valid username (Must be between 6 and 15 characters with no spaces)");
-					String userName = in.readLine();
-					//ask for password
-					out.println("Please enter a valid password (Must be between 9 and 15 characters with a combination of uppercase letters, lowercase letters and numbers with no spaces)");
-					String password = in.readLine();
-					out.println("Checking Details...");
-					//Validate account details
-					if(bank.isPasswordValid(password) && bank.isUserNameValid(userName)) {
-						bank.registerCustomer(userName, password);
-						out.println("Registration successful. You can now log in");
-						while(customer == null) {
-							customer = login();
-						}
-					}
-					
-					else {
-						customer = null;
-						out.println("Registration failed. The username and password entered must be valid, please try again");
-					}	
-				}
+				///////////////////
+				// 1. Process initial request (login or register)
+				///////////////////
+				String intialCommand = greetUser();
 
-				// keep getting requests from the client and processing them if authorised
-				if(customer != null) {
-					out.println("SHOWMYACCOUNTS - view your accounts and their balances");
-					out.println("RESETPASSWORD <Password> - reset login password");
-					out.println("CREATEACCOUNT <Account name> <Opening balance> - create new bank account");
-					out.println("MOVE <Amount> <Account name 1> <Account name 2> - transfer amount from Account 1 to Account 2");
-					
-					while(true) {
-						String request = in.readLine();
-						System.out.println("Request from " + customer.getKey());
-						String response = bank.processRequest(customer, request);
-						out.println(response);
+				///////////////////
+				// 2. Control flow for request
+				/////////////////// 
+				CustomerID customer = null;
+
+				processloop:
+				while(true) {
+					if(intialCommand.equals("LOGIN")) {
+						customer = login();
+					} 
+					else {
+						//ask for user name
+						out.println("Please enter a valid username (Must be between 6 and 15 characters with no spaces)");
+						String userName = in.readLine();
+						//ask for password
+						out.println("Please enter a valid password (Must be between 9 and 15 characters with a combination of uppercase letters, lowercase letters and numbers with no spaces)");
+						String password = in.readLine();
+						out.println("Checking Details...");
+						//Validate account details
+						if(bank.isPasswordValid(password) && bank.isUserNameValid(userName)) {
+							bank.registerCustomer(userName, password);
+							out.println("Registration successful. You can now log in");
+							while(customer == null) {
+								customer = login();
+							}
+						}
+						
+						else {
+							customer = null;
+							out.println("Registration failed. The username and password entered must be valid, please try again");
+						}	
+					}
+
+					/////////////////// 
+					// 3. Process Commands upon authentication
+					/////////////////// 
+					if(customer != null) {
+						out.println("SHOWMYACCOUNTS - view your accounts and their balances");
+						out.println("RESETPASSWORD <Password> - reset login password");
+						out.println("CREATEACCOUNT <Account name> <Opening balance> - create new bank account");
+						out.println("MOVE <Amount> <Account name 1> <Account name 2> - transfer amount from Account 1 to Account 2");
+						out.println("LOGOUT - logout");
+						
+						// keep getting requests from the client and processing them if authenticated
+						while(true) {
+							String request = in.readLine();
+							System.out.println("Request from " + customer.getKey());
+							String response = bank.processRequest(customer, request);
+							out.println(response);
+							//End processloop (initiated on LOGOUT)
+							if(response.equals("END")) {
+								break processloop;
+							}
+						}
 					}
 				}
 			}
@@ -104,25 +120,22 @@ public class NewBankClientHandler extends Thread{
 
 	public CustomerID login() throws IOException {
 		CustomerID customer = null;
-		while (true) {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			customer = bank.checkLogInDetails(userName, password);
-			//Validate login details
-			if(customer == null) {
-				out.println("Log In Failed. Invalid Credentials, please try again.");
-			}
-			else {
-				out.println("Log In Successful. What do you want to do?");
-			}
-			return customer;
+		// ask for user name
+		out.println("Enter Username");
+		String userName = in.readLine();
+		// ask for password
+		out.println("Enter Password");
+		String password = in.readLine();
+		out.println("Checking Details...");
+		customer = bank.checkLogInDetails(userName, password);
+		//Validate login details
+		if(customer == null) {
+			out.println("Log In Failed. Invalid Credentials, please try again.");
 		}
-		
+		else {
+			out.println("Log In Successful. What do you want to do?");
+		}
+		return customer;
 	}
 
 }
