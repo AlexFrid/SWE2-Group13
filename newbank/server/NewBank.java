@@ -111,8 +111,17 @@ public class NewBank {
 				else {
 					customers.get(customer.getKey()).addToAccount(account2, amountToMove);
 					customers.get(customer.getKey()).removeFromAccount(account1, amountToMove);
-					return "Funds have been transferred successfully"; 				}
-	
+					return "Funds have been transferred successfully";
+				}
+			
+			//log customer out
+			case "LOGOUT" :
+				if(requestParams.length != 1) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				return "END";
+
 			default : 
 				return "FAIL";
 			}
