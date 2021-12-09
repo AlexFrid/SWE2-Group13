@@ -68,6 +68,8 @@ public class NewBankClientHandler extends Thread{
 						out.println("RESETPASSWORD <Password> - reset login password");
 						out.println("CREATEACCOUNT <Account name> <Opening balance> - create new bank account");
 						out.println("MOVE <Amount> <Account name 1> <Account name 2> - transfer amount from Account 1 to Account 2");
+						out.println("SHOWMYLENDINGS - show MicroLoan lending activity");
+						out.println("SHOWMYBORROWINGS - show MicroLoan borrowing activity");
 						out.println("LOGOUT - logout");
 						
 						// keep getting requests from the client and processing them if authenticated

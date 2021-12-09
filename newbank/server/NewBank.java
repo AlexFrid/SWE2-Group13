@@ -3,14 +3,17 @@ package newbank.server;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private ArrayList<Loan> loans;
 	
 	private NewBank() {
 		customers = new HashMap<>();
+		loans = new ArrayList<>();
 		addTestData();
 	}
 	
@@ -26,6 +29,8 @@ public class NewBank {
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
+
+		loans.add(new Loan("testLoan", new CustomerID("Bhagy"), new CustomerID("Christina"), 300.00));
 	}
 	
 	public static NewBank getBank() {
@@ -114,6 +119,22 @@ public class NewBank {
 					return "Funds have been transferred successfully";
 				}
 			
+			//show customer's MicroLoan lending activity
+			case "SHOWMYLENDINGS" :
+				if(requestParams.length != 1) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				return showMyLendings(customer);
+			
+			//show customer's MicroLoan borrowing activity
+			case "SHOWMYBORROWINGS" :
+				if(requestParams.length != 1) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				return showMyBorrowings(customer);
+			
 			//log customer out
 			case "LOGOUT" :
 				if(requestParams.length != 1) {
@@ -191,6 +212,26 @@ public class NewBank {
 	
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
+	}
+
+	public String showMyLendings(CustomerID customer) {
+		String s = "";
+		for(Loan l : loans) {
+			if(l.getLender().getKey().equals(customer.getKey())) {
+				s += l.toString() + "\n";
+			}
+		}
+		return s;
+	}
+
+	public String showMyBorrowings(CustomerID customer) {
+		String s = "";
+		for(Loan l : loans) {
+			if(l.getBorrower().getKey().equals(customer.getKey())) {
+				s += l.toString() + "\n";
+			}
+		}
+		return s;
 	}
 
 }
