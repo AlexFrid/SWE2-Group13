@@ -2,13 +2,13 @@ package newbank.server;
 
 public class Loan {
     
-    private String loanID;
+    private int loanID;
     private CustomerID lender;
     private CustomerID borrower;
     private double balance;
 
-    public Loan(String loanID, CustomerID lender, CustomerID borrower, double balance) {
-        this.loanID = loanID;
+    public Loan(int loanID, CustomerID lender, CustomerID borrower, double balance) {
+        this.loanID = loanID; //unique ID
         this.lender = lender;
         this.borrower = borrower;
         this.balance = balance;
@@ -18,12 +18,11 @@ public class Loan {
         return ("loanID:" + loanID + " | Lender:" + lender.getKey() + " | Borrower:" + borrower.getKey() + " | Balance: " + balance);
     }
 
-    public void decreaseBalance(String amount) {
-
-        this.balance = this.balance - Double.parseDouble(amount);
+    public void decreaseBalance(double amount) {
+        this.balance = this.balance - amount;
     }
 
-    public String getLoanID() {
+    public int getLoanID() {
         return loanID;
     }
 
