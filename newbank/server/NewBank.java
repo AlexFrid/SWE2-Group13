@@ -20,10 +20,12 @@ public class NewBank {
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Loan", 0));
 		customers.put("Bhagy", bhagy);
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account("Loan", 1500.0));
 		customers.put("Christina", christina);
 		
 		Customer john = new Customer();
@@ -135,6 +137,30 @@ public class NewBank {
 
 				return showMyBorrowings(customer);
 			
+			//allow a customer to pay a microloan
+			case "PAYMYLOANS" :
+				if(requestParams.length != 3) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				String loanID = requestParams[1];
+				String amount = requestParams[2];
+
+				for(Loan l : loans) {
+					if(l.getLoanID().equals(loanID)) {
+						CustomerID borrower = l.getBorrower();
+						CustomerID lender = l.getLender();
+
+						//Add to lender's account
+						customers.get(lender.getKey()).addToAccount("Loan", amount);
+						//Remove from borrower's account
+						customers.get(borrower.getKey()).removeFromAccount("Loan", amount);
+						//Update Loan balance
+						l.decreaseBalance(amount);
+						return "Loan balance has been successfully updated";
+					}
+				}
+
 			//log customer out
 			case "LOGOUT" :
 				if(requestParams.length != 1) {

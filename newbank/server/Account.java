@@ -5,8 +5,6 @@ public class Account {
 	private String accountName;
 	private double currentBalance;
 
-	
-
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
 		this.currentBalance = openingBalance;
