@@ -3,11 +3,15 @@ package newbank.server;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+
+	//NewBank micro-loans
+	private LoanCollection bankLoans = new LoanCollection();
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -17,15 +21,19 @@ public class NewBank {
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Loan", 0));
 		customers.put("Bhagy", bhagy);
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account("Loan", 1500.0));
 		customers.put("Christina", christina);
 		
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
+
+		bankLoans.addLoan(new CustomerID("Bhagy"), new CustomerID("Christina"), 300.00);
 	}
 	
 	public static NewBank getBank() {
@@ -114,6 +122,54 @@ public class NewBank {
 					return "Funds have been transferred successfully";
 				}
 			
+			//show customer's MicroLoan lending activity
+			case "SHOWMYLENDINGS" :
+				if(requestParams.length != 1) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				return bankLoans.showMyLendings(customer);
+			
+			//show customer's MicroLoan borrowing activity
+			case "SHOWMYBORROWINGS" :
+				if(requestParams.length != 1) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				return bankLoans.showMyBorrowings(customer);
+			
+			//allow a customer to pay a microloan
+			case "PAYMYLOANS" :
+				if(requestParams.length != 3) {
+					return "Not enough or too many arguments have been supplied for this command";
+				}
+
+				Double loanID = Double.parseDouble(requestParams[1]);
+				String amount = requestParams[2];
+
+				ArrayList<Loan> loans = bankLoans.getLoans();
+
+				for(Loan l : loans) {
+					if(l.getLoanID() == loanID) {
+						CustomerID borrower = l.getBorrower();
+						CustomerID lender = l.getLender();
+
+						if(!bankLoans.isRequestValid(l, customer)) {
+							return "You are not authorised to perform that action on this loan";
+						}
+
+						//Add to lender's account
+						customers.get(lender.getKey()).addToAccount("Loan", amount);
+						//Remove from borrower's account
+						customers.get(borrower.getKey()).removeFromAccount("Loan", amount);
+						//Update Loan balance
+						bankLoans.decreaseBalance(l.getLoanID(), Double.parseDouble(amount));
+						return "Loan balance has been successfully updated";
+					}
+				}
+
+				return "Loan can't be found";
+
 			//log customer out
 			case "LOGOUT" :
 				if(requestParams.length != 1) {

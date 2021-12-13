@@ -41,7 +41,6 @@ public class Customer {
 		accounts.add(account);		
 	}
 	
-	
 	public boolean isAmountAvailable(String accountName, String amount) {
 		double parsedAmount = Double.parseDouble(amount);
 		for (Account a : accounts){
